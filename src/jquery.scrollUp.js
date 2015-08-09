@@ -17,7 +17,7 @@
     // Define vars
     var o = $.fn.scrollUp.settings = $.extend({}, $.fn.scrollUp.defaults, options),
       triggerVisible = false,
-      animIn, animOut, animSpeed, scrollDis, scrollEvent, scrollTarget, $self,scrollDefaultStyle;
+      animIn, animOut, animSpeed, scrollDis, scrollEvent, scrollTarget, $self,scrollDefaultStyle,styleHtml;
 
     // Create element
     if (o.scrollTrigger) {
@@ -98,7 +98,20 @@
 
 
 
-    $self.css(scrollDefaultStyle);
+
+//    $self.css(scrollDefaultStyle);
+    styleHtml="#"+ o.scrollName+"{";
+    $.each(scrollDefaultStyle,function(i,n){
+      styleHtml+=i+":"+n+";";
+    });
+    styleHtml+="}";
+    styleHtml+="#"+ o.scrollName+":hover,#"+ o.scrollName+":focus{";
+    $.each(o.scrollHoverStyle,function(i,n){
+      styleHtml+=i+":"+n+";";
+    })
+    styleHtml+="}";
+
+    $('<style/>').html(styleHtml).appendTo('body');
 
 
     // Active point overlay
@@ -198,18 +211,12 @@
     scrollStyle:{
       'background': '#555',
       'color': '#fff',
-      'font-size': '12px',
-      'font-family': 'sans-serif',
-      'text-decoration': 'none',
       'opacity': '.9',
       'padding': '10px 10px',
-      '-webkit-border-radius': '16px',
-      '-moz-border-radius': '16px',
       'border-radius': '16px',
-      '-webkit-transition': 'background 200ms linear',
-      '-moz-transition':' background 200ms linear',
-      'transition': 'background 200ms linear'
+      'text-decoration':"none"
     },
+    scrollHoverStyle:{ 'opacity': '.5'},
     animIn:function(){},
     animOut:function(){}
   };
