@@ -17,7 +17,7 @@
     // Define vars
     var o = $.fn.scrollUp.settings = $.extend({}, $.fn.scrollUp.defaults, options),
       triggerVisible = false,
-      animIn, animOut, animSpeed, scrollDis, scrollEvent, scrollTarget, $self;
+      animIn, animOut, animSpeed, scrollDis, scrollEvent, scrollTarget, $self,scrollDefaultStyle;
 
     // Create element
     if (o.scrollTrigger) {
@@ -37,16 +37,69 @@
     $self.appendTo('body');
 
     // If not using an image display text
-    if (!(o.scrollImg || o.scrollTrigger)) {
+    if (! o.scrollTrigger) {
       $self.html(o.scrollText);
     }
 
+
+
+
     // Minimum CSS to make the magic happen
-    $self.css({
-      display: 'none',
-      position: 'fixed',
-      zIndex: o.zIndex
-    });
+    scrollDefaultStyle=$.extend({},o.scrollStyle,
+      {
+        display: 'none',
+        position: 'fixed',
+        zIndex: o.zIndex
+      });
+
+    if(typeof o.scrollPosition==="string" ){
+      switch (o.scrollPosition){
+        case "RM":
+          scrollDefaultStyle.right="20px";
+          scrollDefaultStyle.top=$(window).height()/2+"px";
+          break;
+        case "LM":
+          scrollDefaultStyle.left="20px";
+          scrollDefaultStyle.top=$(window).height()/2+"px";
+          break;
+        case "TL":
+          scrollDefaultStyle.top="20px";
+          scrollDefaultStyle.left="20px";
+          break;
+
+        case "TR":
+          scrollDefaultStyle.top="20px";
+          scrollDefaultStyle.right="20px";
+          break;
+        case "BL":
+          scrollDefaultStyle.bottom="20px";
+          scrollDefaultStyle.left="20px";
+          break;
+        case "BR":
+        default :
+          scrollDefaultStyle.bottom="20px";
+          scrollDefaultStyle.right="20px";
+          break;
+      }
+    }else if(!$.isEmptyObject(o.scrollPosition)){
+      if($.isNumeric(o.scrollPosition.top)){
+        scrollDefaultStyle.top=o.scrollPosition.top+"px";
+      }
+      if($.isNumeric(o.scrollPosition.bottom)){
+        scrollDefaultStyle.bottom=o.scrollPosition.bottom+"px";
+      }
+      if($.isNumeric(o.scrollPosition.left)){
+        scrollDefaultStyle.left=o.scrollPosition.left+"px";
+      }
+      if($.isNumeric(o.scrollPosition.right)){
+        scrollDefaultStyle.right=o.scrollPosition.right+"px";
+      }
+    }
+
+
+
+    $self.css(scrollDefaultStyle);
+
 
     // Active point overlay
     if (o.activeOverlay) {
@@ -139,9 +192,24 @@
     scrollTarget: false,         // Set a custom target element for scrolling to. Can be element or number
     scrollText: 'Scroll to top', // Text for element, can contain HTML
     scrollTitle: false,          // Set a custom <a> title if required. Defaults to scrollText
-    scrollImg: false,            // Set true to use image
     activeOverlay: false,        // Set CSS color to display scrollUp active point, e.g '#00FFFF'
     zIndex: 2147483647      ,     // Z-Index for the overlay
+    scrollPosition:"RM",
+    scrollStyle:{
+      'background': '#555',
+      'color': '#fff',
+      'font-size': '12px',
+      'font-family': 'sans-serif',
+      'text-decoration': 'none',
+      'opacity': '.9',
+      'padding': '10px 10px',
+      '-webkit-border-radius': '16px',
+      '-moz-border-radius': '16px',
+      'border-radius': '16px',
+      '-webkit-transition': 'background 200ms linear',
+      '-moz-transition':' background 200ms linear',
+      'transition': 'background 200ms linear'
+    },
     animIn:function(){},
     animOut:function(){}
   };
