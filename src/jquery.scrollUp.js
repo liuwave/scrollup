@@ -17,11 +17,17 @@
     // Define vars
     var o = $.fn.scrollUp.settings = $.extend({}, $.fn.scrollUp.defaults, options),
       triggerVisible = false,
-      animIn, animOut, animSpeed, scrollDis, scrollEvent, scrollTarget, $self,scrollDefaultStyle,styleHtml;
+      animIn, animOut, animSpeed, scrollDis, scrollEvent, scrollTarget, $self,scrollDefaultStyle,styleHtml="";
 
     // Create element
     if (o.scrollTrigger) {
       $self = $(o.scrollTrigger);
+      if($self[0].id){
+        o.scrollName=$self[0].id;
+      }else{
+        $self[0].id=o.scrollName;
+      }
+
     } else {
       $self = $('<a/>', {
         id: o.scrollName,
@@ -41,16 +47,18 @@
       $self.html(o.scrollText);
     }
 
-
-
-
-    // Minimum CSS to make the magic happen
-    scrollDefaultStyle=$.extend({},o.scrollStyle,
-      {
-        display: 'none',
-        position: 'fixed',
-        zIndex: o.zIndex
-      });
+    /*
+     scrollDefaultStyle=$.extend({},o.scrollStyle,
+     {
+     display: 'none',
+     position: 'fixed',
+     zIndex: o.zIndex
+     });*/
+    scrollDefaultStyle={
+      display: 'none',
+      position: 'fixed',
+      zIndex: o.zIndex
+    };
 
     if(typeof o.scrollPosition==="string" ){
       switch (o.scrollPosition){
@@ -81,7 +89,8 @@
           scrollDefaultStyle.right="20px";
           break;
       }
-    }else if(!$.isEmptyObject(o.scrollPosition)){
+    }
+    else if(typeof o.scrollPosition==="object" && !$.isEmptyObject(o.scrollPosition)){
       if($.isNumeric(o.scrollPosition.top)){
         scrollDefaultStyle.top=o.scrollPosition.top+"px";
       }
@@ -96,22 +105,53 @@
       }
     }
 
+    if(typeof o.scrollStyle==="string" && /^[a-zA-z0-9\-_]+$/.test(o.scrollStyle)){
+      $self.addClass(o.scrollStyle).css(scrollDefaultStyle);
+      if(typeof o.scrollHoverStyle==="string"
+        && /^[a-zA-z0-9\-_]+$/.test(o.scrollHoverStyle) && o.scrollHoverStyle!=o.scrollStyle)
+      {
+        $self.addClass(o.scrollHoverStyle);
+      }else if(typeof o.scrollHoverStyle==="object" && !$.isEmptyObject(o.scrollHoverStyle)){
+        styleHtml+="#"+ o.scrollName+":hover,#"+ o.scrollName+":focus{";
+        $.each(o.scrollHoverStyle,function(i,n){
+          styleHtml+=i+":"+n+";";
+        })
+        styleHtml+="}";
+
+        $('<style/>').html(styleHtml).appendTo('body');
+
+      }
+    }else{
+      scrollDefaultStyle= $.extend({}, o.scrollStyle,scrollDefaultStyle);
+
+      styleHtml="#"+ o.scrollName+"{";
+      $.each(scrollDefaultStyle,function(i,n){
+        styleHtml+=i+":"+n+";";
+      });
+      styleHtml+="}";
+
+      styleHtml+="#"+ o.scrollName+":hover,#"+ o.scrollName+":focus{";
+      $.each(o.scrollHoverStyle,function(i,n){
+        styleHtml+=i+":"+n+";";
+      })
+      styleHtml+="}";
+
+      $('<style/>').html(styleHtml).appendTo('body');
+
+    }
 
 
 
-//    $self.css(scrollDefaultStyle);
-    styleHtml="#"+ o.scrollName+"{";
-    $.each(scrollDefaultStyle,function(i,n){
-      styleHtml+=i+":"+n+";";
-    });
-    styleHtml+="}";
-    styleHtml+="#"+ o.scrollName+":hover,#"+ o.scrollName+":focus{";
-    $.each(o.scrollHoverStyle,function(i,n){
-      styleHtml+=i+":"+n+";";
-    })
-    styleHtml+="}";
 
-    $('<style/>').html(styleHtml).appendTo('body');
+    // Minimum CSS to make the magic happen
+
+
+
+
+
+
+
+
 
 
     // Active point overlay
