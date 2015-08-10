@@ -47,13 +47,6 @@
       $self.html(o.scrollText);
     }
 
-    /*
-     scrollDefaultStyle=$.extend({},o.scrollStyle,
-     {
-     display: 'none',
-     position: 'fixed',
-     zIndex: o.zIndex
-     });*/
     scrollDefaultStyle={
       display: 'none',
       position: 'fixed',
@@ -118,7 +111,7 @@
         })
         styleHtml+="}";
 
-        $('<style/>').html(styleHtml).appendTo('body');
+        $('<style/>',{id:o.scrollName + '-style'}).html(styleHtml).appendTo('body');
 
       }
     }else{
@@ -136,23 +129,9 @@
       })
       styleHtml+="}";
 
-      $('<style/>').html(styleHtml).appendTo('body');
+      $('<style/>',{id:o.scrollName + '-style'}).html(styleHtml).appendTo('body');
 
     }
-
-
-
-
-    // Minimum CSS to make the magic happen
-
-
-
-
-
-
-
-
-
 
     // Active point overlay
     if (o.activeOverlay) {
@@ -266,6 +245,7 @@
     $.removeData(document.body, 'scrollUp');
     $('#' + $.fn.scrollUp.settings.scrollName).remove();
     $('#' + $.fn.scrollUp.settings.scrollName + '-active').remove();
+    $('#' + $.fn.scrollUp.settings.scrollName + '-style').remove();
 
     // If 1.7 or above use the new .off()
     if ($.fn.jquery.split('.')[1] >= 7) {
